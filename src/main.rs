@@ -14,6 +14,7 @@ struct Cli{
 enum Commands {
     StartNode,
     FetchBlocks,
+    BlockSats,
 }
 
 fn start_node() {
@@ -35,16 +36,25 @@ fn create_rpc_client() -> Result<Client, bitcoincore_rpc::Error> {
     Client::new(rpc_url, rpc_auth)
 }
 
+fn fetch_blocks_stats() -> Result<(), Box<dyn std::error::Error>> {
+    let rpc = create_rpc_client()?;
+    
+    let info = rpc.get_blockchain_info()?;
+    let height = info.blocks;
+
+    let block_stats = rpc.get_block_stats(height)?;
+    println!("avg_tx_size : {:?}", block_stats.avg_tx_size);
+    println!("Block Hash : {:?}", block_stats.block_hash);
+    
+    Ok(())
+}
 
 fn fetch_blocks() -> Result<(), Box<dyn std::error::Error>> {
     let rpc = create_rpc_client()?;
     
     let info = rpc.get_blockchain_info()?;
     let height = info.blocks;
-    
-    println!("Current block height: {}", height);
-    
-    
+
     let latest_hash = rpc.get_block_hash(height)?;
     println!("Latest Block Hash: {}", latest_hash);
     
@@ -64,7 +74,6 @@ fn fetch_blocks() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-
 fn main(){
     let cli = Cli::parse();
 
@@ -72,6 +81,11 @@ fn main(){
         Commands::StartNode => start_node(),
         Commands::FetchBlocks => {
             if let  Err(e) = fetch_blocks(){
+                eprintln!("Error; {}", e)
+            }
+        }
+        Commands::BlockSats => {
+            if let  Err(e) = fetch_blocks_stats(){
                 eprintln!("Error; {}", e)
             }
         }
