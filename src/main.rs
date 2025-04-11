@@ -4,7 +4,7 @@ mod interactive;
 mod rpc_client;
 
 use clap::Parser;
-use cli::{Cli, Commands};
+use cli::{Cli,Commands};
 use commands::{fetch_block_stats, fetch_block_chain_data, start_node};
 use interactive::interactive_mode;
 

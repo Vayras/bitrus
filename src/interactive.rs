@@ -1,10 +1,11 @@
-use crate::commands::{fetch_block_chain_data, fetch_block_stats, stop_node};
+use crate::commands::{fetch_block_chain_data, fetch_block_stats, stop_node, get_network_info};
 use std::io::{self, Write};
 
 fn display_help() {
     println!("\nAvailable commands:");
     println!("  blockchaindata - Display recent blocks information");
     println!("  blockstats  - Display block statistics");
+    println!("  networkinfo  - Display block statistics");
     println!("  help        - Show this help message");
     println!("  exit        - Stop node and exit application");
     println!("");
@@ -25,6 +26,11 @@ pub fn interactive_mode() {
         match input.trim().to_lowercase().as_str() {
             "blockchaindata" => {
                 if let Err(e) = fetch_block_chain_data() {
+                    eprintln!("Error: {}", e);
+                }
+            }
+            "networkinfo" => {
+                if let Err(e) = get_network_info() {
                     eprintln!("Error: {}", e);
                 }
             }
