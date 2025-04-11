@@ -43,27 +43,19 @@ pub fn fetch_block_chain_data() -> Result<(), Box<dyn std::error::Error>> {
     let rpc = create_rpc_client()?;
 
     let info = rpc.get_blockchain_info()?;
-    let height = info.blocks;
 
-    println!("Block Height >>>>>>>> {}", height);
-
-    let latest_hash = rpc.get_block_hash(height)?;
-    println!("Latest Block Hash: {}", latest_hash);
+    println!("chain  : {:?}", info.chain);
+    println!("height : {:?}", info.blocks);
+    println!("headers : {:?}", info.headers);
+    println!("best_block_hash : {:?}", info.best_block_hash);
+    println!("difficulty: {:?}", info.difficulty);
 
     let txoutset_info = rpc.get_tx_out_set_info(None, None, None)?;
-    println!("utxo info : {:#?}", txoutset_info);
-   
-    if height > 0 {
-        let previous_hash = rpc.get_block_hash(height - 1)?;
-        println!("Previous Block Hash: {}", previous_hash);
-    } else {
-        println!("At genesis block; no previous block available.");
-    }
 
-    match rpc.get_block_hash(height + 1) {
-        Ok(next_hash) => println!("Next Block Hash: {}", next_hash),
-        Err(_) => println!("Next block not available yet. Mine more blocks in regtest mode."),
-    }
+    println!("utx_outs  : {:?}", txoutset_info.tx_outs);
+    println!("transactions : {:?}", txoutset_info.transactions);
+    println!("total_amount  : {:?}", txoutset_info.total_amount);
+    println!("transactions : {:?}", txoutset_info.transactions);
 
     Ok(())
 }
