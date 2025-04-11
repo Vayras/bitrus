@@ -5,3 +5,4 @@ pub fn create_rpc_client() -> Result<Client, Error> {
     let rpc_auth = Auth::UserPass("bitcoinuser".into(), "strongpassword".into());
     Client::new(rpc_url, rpc_auth)
 }
+

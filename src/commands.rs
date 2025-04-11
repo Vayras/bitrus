@@ -1,12 +1,6 @@
-use bitcoincore_rpc::{Auth, Client, Error, RpcApi};
+use bitcoincore_rpc::{RpcApi};
 use std::process::Command;
-
-pub fn create_rpc_client() -> Result<Client, Error> {
-    let rpc_url = "http://127.0.0.1:18443";
-    let rpc_auth = Auth::UserPass("bitcoinuser".into(), "strongpassword".into());
-    Client::new(rpc_url, rpc_auth)
-}
-
+use crate::rpc_client::create_rpc_client;
 
 pub fn start_node() {
     let status = Command::new("bitcoind")
@@ -45,15 +39,20 @@ pub fn fetch_block_stats() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-pub fn fetch_blocks() -> Result<(), Box<dyn std::error::Error>> {
+pub fn fetch_block_chain_data() -> Result<(), Box<dyn std::error::Error>> {
     let rpc = create_rpc_client()?;
 
     let info = rpc.get_blockchain_info()?;
     let height = info.blocks;
 
+    println!("Block Height >>>>>>>> {}", height);
+
     let latest_hash = rpc.get_block_hash(height)?;
     println!("Latest Block Hash: {}", latest_hash);
 
+    let txoutset_info = rpc.get_tx_out_set_info(None, None, None)?;
+    println!("utxo info : {:#?}", txoutset_info);
+   
     if height > 0 {
         let previous_hash = rpc.get_block_hash(height - 1)?;
         println!("Previous Block Hash: {}", previous_hash);

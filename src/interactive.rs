@@ -1,18 +1,20 @@
-use crate::commands::{fetch_blocks, fetch_block_stats, stop_node};
+use crate::commands::{fetch_block_chain_data, fetch_block_stats, stop_node};
 use std::io::{self, Write};
 
 fn display_help() {
     println!("\nAvailable commands:");
-    println!("  fetchblocks - Display recent blocks information");
+    println!("  blockchaindata - Display recent blocks information");
     println!("  blockstats  - Display block statistics");
     println!("  help        - Show this help message");
     println!("  exit        - Stop node and exit application");
+    println!("");
 }
 
 pub fn interactive_mode() {
-    println!("Bitcoin CLI Interactive Mode");
-    println!("Type 'help' for commands or 'exit' to quit\n");
 
+    println!("Bitcoin CLI Interactive Mode");
+    display_help();
+    
     loop {
         print!("> ");
         io::stdout().flush().unwrap();
@@ -21,8 +23,8 @@ pub fn interactive_mode() {
         io::stdin().read_line(&mut input).expect("Failed to read input");
 
         match input.trim().to_lowercase().as_str() {
-            "fetchblocks" => {
-                if let Err(e) = fetch_blocks() {
+            "blockchaindata" => {
+                if let Err(e) = fetch_block_chain_data() {
                     eprintln!("Error: {}", e);
                 }
             }
@@ -32,7 +34,7 @@ pub fn interactive_mode() {
                 }
             }
             "help" => display_help(),
-            "exit" | "quit" => {
+            "exit" | "quit" | "clear" => {
                 stop_node();
                 println!("Exiting...");
                 break;
